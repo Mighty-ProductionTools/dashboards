@@ -660,7 +660,13 @@ function percentReader(samples) {
 }
 
 // Dates are built from their parts so they never shift a day with the time zone.
+// Empty date cells that come through a formula are exported by Google Sheets as
+// 30/12/1899 (its "day zero"). Anything outside 2000–2100 is treated as no date.
 function parseDate(v) {
+  const d = parseDateRaw(v);
+  return d && d.getFullYear() >= 2000 && d.getFullYear() <= 2100 ? d : null;
+}
+function parseDateRaw(v) {
   if (v === null || v === undefined) return null;
   const s = String(v).trim();
   if (!s) return null;
