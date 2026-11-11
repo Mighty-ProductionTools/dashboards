@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mighty Dashboards · Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#fff; --surface:#f7f8fa; --surface2:#eef0f3; --border:#e2e5ea; --text:#1a1d23; --muted:#6b7280; --green:#00a862; --teal:#00b8d4; --red:#d92b43; --orange:#c96a10; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:'Nunito Sans',sans-serif; min-height:100vh; }
+  header { background:var(--text); color:#fff; height:64px; padding:0 40px; display:flex; align-items:center; justify-content:space-between; }
+  header b { font-size:18px; font-weight:800; }
+  header span { font-size:12px; font-weight:700; letter-spacing:2.5px; text-transform:uppercase; color:rgba(255,255,255,.45); }
+  main { max-width:1180px; margin:0 auto; padding:36px 40px 80px; display:grid; grid-template-columns:340px 1fr; gap:32px; align-items:start; }
+  h1 { font-size:13px; font-weight:800; letter-spacing:2.5px; text-transform:uppercase; color:var(--muted); margin-bottom:14px; }
+  .card { background:var(--surface); border:1.5px solid var(--border); border-radius:18px; padding:24px; }
+  .card + .card { margin-top:24px; }
+  .proj { display:flex; align-items:center; gap:10px; padding:12px 14px; border-radius:12px; border:1.5px solid var(--border); background:#fff; margin-bottom:8px; cursor:pointer; }
+  .proj:hover, .proj.sel { border-color:var(--text); }
+  .proj-name { font-weight:800; font-size:15px; }
+  .proj-id { font-size:11px; font-weight:700; color:var(--muted); letter-spacing:1px; }
+  .proj-new { margin-left:auto; font-size:10px; font-weight:800; letter-spacing:1px; color:var(--orange); text-transform:uppercase; }
+  .empty { font-size:13px; color:var(--muted); padding:8px 2px 14px; }
+  label { display:block; font-size:11px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); margin:16px 0 6px; }
+  label small { text-transform:none; letter-spacing:0; font-weight:600; }
+  input[type=text], textarea { width:100%; padding:11px 14px; border:1.5px solid var(--border); border-radius:10px; font:600 14px 'Nunito Sans',sans-serif; color:var(--text); background:#fff; outline:none; }
+  input:focus, textarea:focus { border-color:var(--teal); }
+  input.bad { border-color:var(--red); }
+  .row2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  .url-row { display:grid; grid-template-columns:1fr 150px; gap:10px; align-items:center; }
+  .check { font-size:12px; font-weight:700; color:var(--muted); }
+  .check.ok { color:var(--green); } .check.fail { color:var(--red); } .check.warn { color:var(--orange); }
+  .btns { display:flex; gap:10px; flex-wrap:wrap; margin-top:22px; }
+  button { font:800 12px 'Nunito Sans',sans-serif; letter-spacing:1px; text-transform:uppercase; padding:12px 20px; border-radius:10px; border:1.5px solid var(--text); background:var(--text); color:#fff; cursor:pointer; }
+  button.ghost { background:#fff; color:var(--text); border-color:var(--border); }
+  button.danger { background:#fff; color:var(--red); border-color:var(--border); }
+  button:hover { filter:brightness(1.15); } button.ghost:hover, button.danger:hover { border-color:currentColor; filter:none; }
+  .msg { font-size:13px; font-weight:700; margin-top:14px; min-height:18px; }
+  .msg.err { color:var(--red); } .msg.good { color:var(--green); }
+  .publish { display:none; }
+  .publish.on { display:block; }
+  .steps { font-size:14px; line-height:1.8; padding-left:20px; margin-bottom:14px; }
+  .steps b { font-weight:800; }
+  textarea { font:500 12px ui-monospace,Menlo,Consolas,monospace; height:210px; resize:vertical; white-space:pre; }
+  .link-box { display:flex; gap:10px; align-items:center; background:#fff; border:1.5px solid var(--border); border-radius:10px; padding:10px 14px; font-size:13px; font-weight:700; word-break:break-all; margin-top:6px; }
+  .link-box span { flex:1; }
+  .link-box button { padding:7px 12px; font-size:10px; }
+  a { color:var(--text); font-weight:800; }
+  .note { font-size:12px; color:var(--muted); line-height:1.6; margin-top:14px; }
+  @media (max-width:900px) { main { grid-template-columns:1fr; padding:24px 16px 60px; } header { padding:0 16px; } .row2, .url-row { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<header><b>mighty®</b><span>Dashboards · Admin</span></header>
+<main>
+  <section>
+    <h1>Proyectos</h1>
+    <div class="card">
+      <div id="list"></div>
+      <button id="new" class="ghost" style="width:100%">+ Nuevo proyecto</button>
+    </div>
+  </section>
+
+  <section>
+    <h1 id="form-title">Nuevo proyecto</h1>
+    <div class="card">
+      <div class="row2">
+        <div><label for="f-name">Nombre del proyecto</label><input type="text" id="f-name" placeholder="YKO" autocomplete="off"></div>
+        <div><label for="f-id">Liga corta <small>(letras, números y guiones)</small></label><input type="text" id="f-id" placeholder="yko" autocomplete="off"></div>
+      </div>
+      <label for="f-pass">Password del cliente <small id="pass-hint"></small></label>
+      <input type="text" id="f-pass" autocomplete="off">
+
+      <label>Ligas publicadas como CSV <small>(File → Share → Publish to web → una hoja → CSV)</small></label>
+      <div id="urls"></div>
+
+      <div class="btns">
+        <button id="save">Guardar proyecto</button>
+        <button id="test" class="ghost">Probar ligas</button>
+        <button id="del" class="danger" style="display:none">Eliminar</button>
+      </div>
+      <div class="msg" id="msg"></div>
+    </div>
+
+    <div class="card publish" id="publish">
+      <h1>Publicar los cambios</h1>
+      <ol class="steps">
+        <li>Copia el texto de abajo.</li>
+        <li>Abre <b>projects.js</b> en GitHub<span id="gh-link"></span>, borra todo lo que tiene y pega.</li>
+        <li>Da clic en <b>Commit changes</b>. En 1–2 minutos queda activo.</li>
+      </ol>
+      <textarea id="out" readonly spellcheck="false"></textarea>
+      <div class="btns"><button id="copy">Copiar texto</button></div>
+      <div id="client-link"></div>
+      <p class="note">Los cambios de esta página no se guardan solos: quedan activos hasta que pegas el texto en GitHub. Si cierras la página antes, se pierden.</p>
+    </div>
+  </section>
+</main>
+
+<script>
+const SHEETS = [
+  ["GENERAL",  "GENERAL_DATA",   ["key", "value"]],
+  ["DEPT",     "DEPT_DATA",      ["deptid", "deliveredpct"]],
+  ["EPISODE",  "EPISODE_DATA",   ["episode", "deliveredpct"]],
+  ["HISTORY",  "WEEKLY_HISTORY", ["week", "deliveredpct"]],
+  ["SCHEDULE", "SCHEDULE_DATA",  ["startdate", "duedate"]],
+];
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+const norm = s => String(s || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+const slug = s => String(s || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+
+let projects = {};        // id → project
+let published = new Set(); // ids that are already live on GitHub
+let editing = null;       // id being edited, or null for a new project
+let idTouched = false;
+
+$("urls").innerHTML = SHEETS.map(([k, label]) => `
+  <div class="url-row" style="margin-bottom:8px">
+    <input type="text" id="u-${k}" placeholder="${label}  ·  https://docs.google.com/…output=csv" autocomplete="off" aria-label="${label}">
+    <div class="check" id="c-${k}">${label}</div>
+  </div>`).join("");
+
+async function sha256(text) {
+  const hash = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
+  return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, "0")).join("");
+}
+
+function siteBase() { return location.href.replace(/[^/]*([?#].*)?$/, ""); }
+function clientLink(id) { return siteBase() + id; }
+function githubEditUrl() {
+  const m = location.hostname.match(/^(.+)\.github\.io$/);
+  const repo = location.pathname.split("/").filter(Boolean)[0];
+  return m && repo && !/\.html$/.test(repo) ? `https://github.com/${m[1]}/${repo}/edit/main/projects.js` : null;
+}
+
+function renderList() {
+  const ids = Object.keys(projects).sort();
+  $("list").innerHTML = ids.length ? ids.map(id => `
+    <div class="proj ${id === editing ? "sel" : ""}" data-id="${esc(id)}" role="button" tabindex="0">
+      <div><div class="proj-name">${esc(projects[id].name)}</div><div class="proj-id">/${esc(id)}</div></div>
+      ${published.has(id) ? "" : `<div class="proj-new">sin publicar</div>`}
+    </div>`).join("") : `<div class="empty">Todavía no hay proyectos.</div>`;
+}
+
+function setMsg(text, cls) { $("msg").textContent = text; $("msg").className = "msg " + (cls || ""); }
+function resetChecks() { SHEETS.forEach(([k, label]) => { $("c-" + k).textContent = label; $("c-" + k).className = "check"; $("u-" + k).classList.remove("bad"); }); }
+
+function openForm(id) {
+  editing = id && projects[id] ? id : null;
+  const p = editing ? projects[editing] : { name: "", sheets: {} };
+  $("form-title").textContent = editing ? "Editar proyecto" : "Nuevo proyecto";
+  $("f-name").value = p.name;
+  $("f-id").value = editing || "";
+  $("f-id").readOnly = !!editing;
+  $("f-pass").value = "";
+  $("f-pass").placeholder = editing ? "Déjalo vacío para conservar el actual" : "";
+  $("pass-hint").textContent = editing ? "(solo si quieres cambiarlo)" : "";
+  SHEETS.forEach(([k]) => { $("u-" + k).value = p.sheets[k] || ""; });
+  $("del").style.display = editing ? "" : "none";
+  idTouched = !!editing;
+  ["f-name", "f-id", "f-pass"].forEach(i => $(i).classList.remove("bad"));
+  resetChecks(); setMsg(""); renderList();
+}
+
+function showPublish(focusId) {
+  const ordered = {};
+  Object.keys(projects).sort().forEach(k => { ordered[k] = projects[k]; });
+  $("out").value = "// Mighty dashboards — list of projects. Edit this file through admin.html.\nwindow.PROJECTS = " + JSON.stringify(ordered, null, 2) + ";\n";
+  const gh = githubEditUrl();
+  $("gh-link").innerHTML = gh ? ` (<a href="${esc(gh)}" target="_blank" rel="noopener">abrir</a>)` : "";
+  $("client-link").innerHTML = focusId && projects[focusId] ? `
+    <label>Liga para el cliente de ${esc(projects[focusId].name)}</label>
+    <div class="link-box"><span>${esc(clientLink(focusId))}</span><button class="ghost" data-copy="${esc(clientLink(focusId))}">Copiar</button></div>` : "";
+  $("publish").classList.add("on");
+}
+
+async function save() {
+  const name = $("f-name").value.trim();
+  const id = editing || slug($("f-id").value);
+  const pass = $("f-pass").value;
+  const sheets = {};
+  let bad = false;
+  resetChecks();
+  [["f-name", !name], ["f-id", !id || (!editing && projects[id])], ["f-pass", !editing && !pass]].forEach(([el, isBad]) => { $(el).classList.toggle("bad", !!isBad); bad = bad || !!isBad; });
+  SHEETS.forEach(([k, label]) => {
+    const url = $("u-" + k).value.trim();
+    const ok = /^https:\/\/docs\.google\.com\/spreadsheets\/.+output=csv/.test(url) && /[?&]gid=\d+/.test(url);
+    if (!ok) { $("u-" + k).classList.add("bad"); $("c-" + k).textContent = url ? "No es una liga CSV de una hoja" : "Falta la liga"; $("c-" + k).className = "check fail"; bad = true; }
+    sheets[k] = url;
+  });
+  if (!editing && id && projects[id]) { setMsg(`Ya existe un proyecto con la liga /${id}.`, "err"); return; }
+  if (bad) { setMsg("Revisa los campos marcados en rojo.", "err"); return; }
+  const urls = Object.values(sheets);
+  if (new Set(urls).size !== urls.length) { setMsg("Hay ligas repetidas: cada hoja debe tener su propia liga.", "err"); return; }
+  let passwordHash;
+  try { passwordHash = pass ? await sha256(pass) : projects[editing].passwordHash; }
+  catch (e) { setMsg("Este navegador no pudo procesar el password. Abre la página con https://.", "err"); return; }
+  projects[id] = { name, passwordHash, sheets };
+  published.delete(id);
+  editing = id;
+  openForm(id);
+  setMsg("Guardado aquí. Falta publicarlo en GitHub (pasos abajo).", "good");
+  showPublish(id);
+  $("publish").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+async function testLinks() {
+  setMsg("");
+  await Promise.all(SHEETS.map(async ([k, label, need]) => {
+    const el = $("c-" + k), url = $("u-" + k).value.trim();
+    if (!url) { el.textContent = "Falta la liga"; el.className = "check fail"; return; }
+    el.textContent = "Probando…"; el.className = "check";
+    try {
+      const res = await fetch(url + (url.includes("?") ? "&" : "?") + "t=" + Date.now(), { cache: "no-store" });
+      const text = await res.text();
+      if (!res.ok || /^\s*<(!doctype|html)/i.test(text)) throw new Error();
+      const lines = text.split(/\r?\n/).filter(l => l.replace(/[,\s"]/g, ""));
+      const header = lines.slice(0, 15).some(l => { const cells = l.split(",").map(norm); return need.every(n => cells.includes(n)); });
+      if (!header) { el.textContent = `No parece ${label}`; el.className = "check warn"; }
+      else if (lines.length < 3) { el.textContent = `Solo ${lines.length} fila(s)`; el.className = "check warn"; }
+      else { el.textContent = `OK · ${lines.length} filas`; el.className = "check ok"; }
+    } catch (e) { el.textContent = "No se pudo leer"; el.className = "check fail"; }
+  }));
+  if (document.querySelector(".check.warn, .check.fail")) setMsg("Alguna liga no trae lo esperado. Si una hoja usa IMPORTRANGE, publica la hoja del archivo origen.", "err");
+  else setMsg("Las 5 ligas responden bien.", "good");
+}
+
+document.addEventListener("click", e => {
+  const copy = e.target.closest("[data-copy]");
+  if (copy) { navigator.clipboard.writeText(copy.dataset.copy); copy.textContent = "Copiado"; return; }
+  const proj = e.target.closest(".proj");
+  if (proj) openForm(proj.dataset.id);
+});
+document.addEventListener("keydown", e => { if (e.key === "Enter" && e.target.classList.contains("proj")) openForm(e.target.dataset.id); });
+$("new").onclick = () => openForm(null);
+$("save").onclick = save;
+$("test").onclick = testLinks;
+$("del").onclick = () => {
+  if (!editing || !confirm(`¿Eliminar el proyecto ${projects[editing].name}? Su liga dejará de funcionar cuando publiques el cambio.`)) return;
+  delete projects[editing]; published.delete(editing);
+  openForm(null); setMsg("Eliminado aquí. Falta publicarlo en GitHub (pasos abajo).", "good"); showPublish(null);
+};
+$("copy").onclick = () => { navigator.clipboard.writeText($("out").value); $("copy").textContent = "Copiado"; setTimeout(() => { $("copy").textContent = "Copiar texto"; }, 1500); };
+$("f-name").oninput = () => { if (!idTouched) $("f-id").value = slug($("f-name").value); };
+$("f-id").oninput = () => { idTouched = true; };
+window.addEventListener("beforeunload", e => { if (Object.keys(projects).some(id => !published.has(id))) { e.preventDefault(); e.returnValue = ""; } });
+
+// Load the projects that are live right now.
+(function () {
+  const done = () => { projects = JSON.parse(JSON.stringify(window.PROJECTS || {})); published = new Set(Object.keys(projects)); openForm(null); };
+  const tag = document.createElement("script");
+  tag.src = "projects.js?t=" + Date.now();
+  tag.onload = done; tag.onerror = done;
+  document.head.appendChild(tag);
+})();
+</script>
+</body>
+</html>

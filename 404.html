@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="robots" content="noindex, nofollow"><title>Mighty Production Dashboard</title>
+<script>
+// Turns a short link like …/yko into …/?p=yko
+(function () {
+  var segs = location.pathname.split("/").filter(Boolean);
+  var onGithub = /\.github\.io$/.test(location.hostname);
+  var base = onGithub && segs.length ? "/" + segs[0] + "/" : "/";
+  var project = segs.length > (onGithub ? 1 : 0) ? segs[segs.length - 1] : "";
+  location.replace(base + (project ? "?p=" + encodeURIComponent(project) : ""));
+})();
+</script></head><body></body></html>
