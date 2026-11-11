@@ -13,7 +13,7 @@ window.PROJECTS = {
   },
   "yko": {
     "name": "YKO",
-    "passwordHash": "525c0a7859081f00769d3f918497a154a9fd7f20deca626edca4ddd05ccf4f46",
+    "passwordHash": "5efeb98510e6b470a2429ae5f5d77a2c7897f4ddf54827825ce454bce7b051e6",
     "sheets": {
       "GENERAL": "https://docs.google.com/spreadsheets/d/e/2PACX-1vQfYBUfd0qfKdJ5QRiOIppDMm2IeABOxvRJDH6EDvGBR5lds6Fe6Q5tXqLWYaxqfdFVlDzcsy8JGGJ4/pub?gid=1059643932&single=true&output=csv",
       "DEPT": "https://docs.google.com/spreadsheets/d/e/2PACX-1vQfYBUfd0qfKdJ5QRiOIppDMm2IeABOxvRJDH6EDvGBR5lds6Fe6Q5tXqLWYaxqfdFVlDzcsy8JGGJ4/pub?gid=583187388&single=true&output=csv",
